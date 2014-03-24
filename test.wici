@@ -1,0 +1,6 @@
+get A
+get B
+push A  ;This is a comment
+push B
+sub
+halt
