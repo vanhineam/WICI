@@ -1,3 +1,11 @@
+/**
+ * Author: Adam Van Hine
+ * Username: vanhineam
+ *
+ * Description: File manipulation for the interpreter. This is where we read
+ * in the file and send the contents of what we read to be insterted into the
+ * instruction table.
+ */
 #include <stdio.h>
 #include "instructions.h"
 

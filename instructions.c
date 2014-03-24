@@ -1,3 +1,12 @@
+/**
+ * Author: Adam Van Hine
+ * Username: vanhineam
+ *
+ * Description: The instruction table and instruction logic for the WIC
+ * Interpreter. This is where we define the structs for the instruction type
+ * and the instruction table. We also add the ability to print the tables 
+ * at any time.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
