@@ -54,16 +54,14 @@ void printInstructionTable()
   int i;
   for(i = 0; i < instrTable.instructionCount; i++)
   {
-    char opcode[OPCODE_SIZE], operand[OPERAND_SIZE];
-    strncpy(opcode, instrTable.instructions[i].opcode, OPCODE_SIZE);
-    if(hasOperand(opcode))
+    if(hasOperand(instrTable.instructions[i].opcode))
     {
-      strncpy(operand, instrTable.instructions[i].operand, OPERAND_SIZE);
-      printf("%s %s\n", opcode, operand);
+      printf("%s %s\n", instrTable.instructions[i].opcode,
+             instrTable.instructions[i].operand);
     }
     else
     {
-      printf("%s\n", opcode);
+      printf("%s\n", instrTable.instructions[i].opcode);
     }
   }
 }
@@ -214,7 +212,6 @@ int pop(int pc, char * operand)
   return pc + 1;
 }
 **/
-
 /**
 int not(int pc);
 int and(int pc);

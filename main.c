@@ -24,12 +24,15 @@ int main(int argc, char * argv[]){
 
     // initialize the symbol table, jump table and stack to 0
     // method will be in instructions.c
+    initialize();
 
     // read the input file and prepare structures
     readInstructions(fp);
 
     // Close the file.
     fclose(fp); 
+
+    printInstructionTable();
 
     // Begin to interpret
     execute();
@@ -44,6 +47,34 @@ int main(int argc, char * argv[]){
 
 void readInstructions(FILE * fp)
 {
+    int address = 0;
+    char opcode[OPCODE_SIZE];
+    char operand[OPERAND_SIZE];
+
+    // Read the file and get the opcode while not EOF
+    while(fscanf(fp, "%s", opcode) == 1)
+    {
+        // Check if opcode has an operand and if it does read that into the 
+        // operand variable
+        if(hasOperand(opcode))
+        {
+            if(fscanf(fp, "%s", operand) != 1)
+            {
+                printf("Could not read operand\n");
+                exit(1);
+            }
+        }
+        else
+        {
+            operand[0] = 0;
+        }
+
+        discardline(fp);
+
+        // Insert the instruction into the instruction table
+        insertInstruction(address, opcode, operand);
+        address++;
+    }
 }
 
 void execute()

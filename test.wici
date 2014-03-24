@@ -1,6 +1,6 @@
 get A
 get B
-push A  ;This is a comment
+push A
 push B
 sub
 halt

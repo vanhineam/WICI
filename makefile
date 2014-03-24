@@ -11,5 +11,5 @@ table: testtable.c table.h table.c
 instruction: testinstructions.c instructions.c instructions.h stack.c stack.h table.c table.h
 	gcc testinstructions.c instructions.c instructions.h stack.c stack.h table.c table.h -o testinstructions
 
-cwici: cwici.c instructions.h instructions.c table.h table.c stack.h stack.c
-	gcc cwici.c instructions.h instructions.c table.h table.c stack.h stack.c -o cwici
+cwici: main.c instructions.h instructions.c table.h table.c stack.h stack.c
+	gcc main.c instructions.h instructions.c table.h table.c stack.h stack.c -o cwici
