@@ -1,6 +1,6 @@
 
 default: 
-	@echo "make targets are: stack, table"
+	@echo "make targets are: stack, table, instruction, cwici, clean"
 
 stack: teststack.c stack.h stack.c 
 	gcc teststack.c stack.c -o teststack
@@ -13,3 +13,9 @@ instruction: testinstructions.c instructions.c instructions.h stack.c stack.h ta
 
 cwici: main.c instructions.h instructions.c table.h table.c stack.h stack.c
 	gcc main.c instructions.h instructions.c table.h table.c stack.h stack.c -o cwici
+
+clean:
+	rm -f cwici testtable teststack testinstructions
+
+debug:main.c instructions.c instructions.h stack.c stack.h table.c table.h
+	gcc main.c instructions.h instructions.c table.h table.c stack.h stack.c -o cwici -g

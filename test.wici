@@ -1,6 +1,9 @@
-get A
-get B
-push A
-push B
-sub
-halt
+get A 
+get B 
+push A % retrieve value of A and push onto stack 
+push B % retrieve value of B and push onto stack 
+pop A % pop value off stack, update symbol table of A 
+pop B % pop value off stack, update symbol table of B 
+put A 
+put B 
+halt 

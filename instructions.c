@@ -68,14 +68,33 @@ void printInstructionTable()
 
 int fetchInstruction(int address, char * opcode, char * operand)
 {
+  if(address > instrTable.instructionCount)
+  {
+    printf("Address is outside of range\n");
+    exit(1);
+  }
+  strncpy(opcode, instrTable.instructions[address].opcode, OPCODE_SIZE);
+  strncpy(operand, instrTable.instructions[address].operand, OPERAND_SIZE);
   return 1;
 }
 
 void insertInstruction(int address, char * opcode, char * operand)
 {
   instructionType instr;
-  strncpy(instr.opcode, opcode, OPCODE_SIZE);
-  strncpy(instr.operand, operand, OPERAND_SIZE);
+
+  if(strcmp(operand, "label") == 0)
+  {
+    store(&jumpTable, opcode, address);
+    strncpy(instr.opcode, "nop", OPCODE_SIZE);
+    operand[0] = 0;
+    strncpy(instr.operand, operand, OPERAND_SIZE);
+  }
+  else
+  {
+    strncpy(instr.opcode, opcode, OPCODE_SIZE);
+    strncpy(instr.operand, operand, OPERAND_SIZE);
+  }
+  
   instrTable.instructions[address] = instr;
   instrTable.instructionCount++;
 }
@@ -112,7 +131,7 @@ int hasOperand(char * opcode)
 // Begin opcode function section.
 //**********************************************************************
 //Functions for various instructions go here. 
-/**
+
 int nop(int pc) { return pc + 1; }
 
 int add(int pc){
@@ -128,7 +147,7 @@ int divide(int pc)
   int lop = stackPop(&stack);
   if(rop == 0)
   {
-    fprintf(stderr, "Can't divide by 0");
+    fprintf(stderr, "Can't divide by 0\n");
     exit(0);
   }
   else
@@ -141,7 +160,7 @@ int divide(int pc)
 int sub(int pc)
 {
   int rop = stackPop(&stack);
-  int rop = stackPop(&stack);
+  int lop = stackPop(&stack);
   stackPush(&stack, lop - rop);
   return pc + 1;
 }
@@ -156,7 +175,7 @@ int mul(int pc)
 
 int get(int pc, char * operand)
 {
-  int val;
+  int val = 0;
   char numstring[10];
   char * endptr;
 
@@ -165,9 +184,10 @@ int get(int pc, char * operand)
   fgets(numstring, 10, stdin);
 
   val = strtol(numstring, &endptr, 10);
+
   if(*endptr != '\n')
   {
-    printf("Some characters in the string are not base 10 digits.");
+    printf("Some characters in the string are not base 10 digits.\n");
     while(*endptr !='\n')
     {
       endptr++;
@@ -184,23 +204,24 @@ int get(int pc, char * operand)
 
 int put(int pc, char * operand)
 {
+  int val = 0;
   val = retrieve(&symbolTable, operand);
-  printf("%s = %d", operand, val);
+  printf("%s = %d\n", operand, val);
+  return pc + 1;
 }
 
 int push(int pc, char * operand)
 {
   int numResult;
-  char* charResult;
   if(isdigit(*operand))
   {
-    numResult = atoi(*operand);
-    stachPush(&stack, numResult);
+    numResult = atoi(operand);
+    stackPush(&stack, numResult);
   }
   else
   {
-    charResult = retrieve(&symbolTable, operand);
-    stackPush(&stack, charResult);
+    numResult = retrieve(&symbolTable, operand);
+    stackPush(&stack, numResult);
   }
   return pc + 1;
 }
@@ -211,18 +232,134 @@ int pop(int pc, char * operand)
   store(&symbolTable, operand, var);
   return pc + 1;
 }
-**/
-/**
-int not(int pc);
-int and(int pc);
-int or(int pc);
-int testeq(int pc);
-int testne(int pc);
-int testlt(int pc);
-int testle(int pc);
-int testgt(int pc);
-int testge(int pc);
-int jump(int pc, char * operand);
-int jf(int pc, char * operand);
-int halt(int pc);
-**/
+
+int not(int pc)
+{
+  int val;
+  val = stackPop(&stack);
+  stackPush(&stack, !val);
+  return pc + 1;
+}
+
+int and(int pc)
+{
+  int rop = stackPop(&stack);
+  int lop = stackPop(&stack);
+  stackPush(&stack, lop && rop);
+  return pc + 1;
+}
+
+int or(int pc)
+{
+  int rop = stackPop(&stack);
+  int lop = stackPop(&stack);
+  stackPush(&stack, lop || rop);
+  return pc + 1;
+}
+
+int testeq(int pc)
+{
+  int var = stackPop(&stack);
+  if(var == 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+int testne(int pc)
+{
+  int var = stackPop(&stack);
+  if(var != 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+int testlt(int pc)
+{
+  int var = stackPop(&stack);
+  if(var < 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+int testle(int pc)
+{
+  int var = stackPop(&stack);
+  if(var <= 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+int testgt(int pc)
+{
+  int var = stackPop(&stack);
+  if(var > 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+int testge(int pc)
+{
+  int var = stackPop(&stack);
+  if(var >= 0)
+  {
+    stackPush(&stack, 1);
+  }
+  else
+  {
+    stackPush(&stack, 0);
+  }
+  return pc + 1;
+}
+
+
+int jump(int pc, char * operand)
+{
+  return retrieve(&jumpTable, operand);
+}
+
+int jf(int pc, char * operand)
+{
+  if(stackPop(&stack) == 1)
+  {
+    return pc + 1;
+  }
+  else
+  {
+    return retrieve(&jumpTable, operand);
+  }
+}
+
+int halt(int pc)
+{
+  return pc + 1;
+}
